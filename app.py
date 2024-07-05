@@ -32,13 +32,16 @@ def main():
     openai.api_key = "fe5f6afae5bfffb5c4fa148b061977a1.9Ep40DMGOnBb3FTo"
     openai.base_url = "https://open.bigmodel.cn/api/paas/v4/"
 
-    upload_file = st.sidebar.file_uploader("**上传你的测试文件(.csv或.xslx)**")
+    upload_file = st.sidebar.file_uploader("**上传你的测试文件(.csv或.xslx)，目前仅支持单文件**")
 
     if not (uuid and authkey and authsecret and upload_file):
         st.button('开始批量测试！', disabled=True)
         st.warning('请在侧边栏输入所有信息')
     else:
-        df = pd.read_csv(upload_file)
+        if upload_file.name.endswith('.csv'):
+            df = pd.read_csv(upload_file)
+        elif upload_file.name.endswith('.xlsx'):
+            df = pd.read_excel(upload_file)
         st.dataframe(df, width=1800, height=400)
         if st.button('开始批量测试！'):
             result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
