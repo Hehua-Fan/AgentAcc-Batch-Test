@@ -1,5 +1,5 @@
 # AgentAcc-Batch-Test
-![alt text](src/image.png)
+![alt text](src/img.jpg)
 ## Features
 * Upload question-answer pair csv file
 
