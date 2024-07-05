@@ -114,7 +114,7 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
         tf = evaluate_model(response, df["expected_output"][i])
         actual_output.append(response)
         judgement.append(tf)
-        if judgement:
+        if tf:
             num_correct += 1
 
     df = pd.DataFrame(data={'提示词': df["prompt"],
