@@ -41,8 +41,9 @@ def main():
         if st.button('开始批量测试！'):
             df = pd.read_csv(upload_file)
             st.dataframe(df, width=1800, height=400)
-            result_df = evaluate_prompt(df, host, uuid, authkey, authsecret)
+            result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
             st.dataframe(result_df, width=1800, height=400)
+            st.write(f"Agent准确率: {acc}")
 
             result_df.to_csv('result.csv', index=False)
             with open('result.csv', 'rb') as f:

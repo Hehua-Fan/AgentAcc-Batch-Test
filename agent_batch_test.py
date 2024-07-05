@@ -105,7 +105,7 @@ def api_model(prompt, host, uuid, authKey, authSecret):
         print(f"Request failed with status code {response.status_code}")
 
 def evaluate_prompt(df, host, uuid, authkey, authsecret):
-    correct = 0
+    num_correct, num_total = 0, df.shape[0]
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
@@ -115,7 +115,7 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
         actual_output.append(response)
         judgement.append(tf)
         if judgement:
-            correct += 1
+            num_correct += 1
 
     df = pd.DataFrame(data={'提示词': df["prompt"],
                        '期望输出': df["expected_output"],
@@ -123,12 +123,10 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
                        '是否准确': judgement})
 
     df.to_csv("evaluation.csv", index=False)
+    accuracy = num_correct / num_total
 
-    return df
+    return df, accuracy
 
-
-    # accuracy = correct / total
-    # print(f"准确率: {accuracy * 100:.2f}%")
 
 if __name__ == "__main__":
 
