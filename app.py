@@ -19,10 +19,10 @@ def main():
     st.write("""目前仅支持单轮对话，请先在本地制作好问答对(提示词一列，期望回答一列)""")
 
     host = "https://uat.agentspro.cn"
-    st.sidebar.write("以下内容位置：你的Agent - 右上角三个点 - 发布 - API Key")
-    uuid = st.sidebar.text_input("Uuid", placeholder="请输入uuid")
-    authkey = st.sidebar.text_input("AuthKey", placeholder="请输入AuthKey")
-    authsecret = st.sidebar.text_input("AuthSecret", placeholder="请输入AuthSecret")
+    st.sidebar.write("**以下内容位置：你的Agent - 右上角三个点 - 发布 - API Key**")
+    uuid = st.sidebar.text_input("**Uuid**", placeholder="请输入uuid")
+    authkey = st.sidebar.text_input("**AuthKey**", placeholder="请输入AuthKey")
+    authsecret = st.sidebar.text_input("**AuthSecret**", placeholder="请输入AuthSecret")
 
     # 处理用户无意输入的空格
     uuid = uuid.strip()
@@ -32,7 +32,7 @@ def main():
     openai.api_key = "fe5f6afae5bfffb5c4fa148b061977a1.9Ep40DMGOnBb3FTo"
     openai.base_url = "https://open.bigmodel.cn/api/paas/v4/"
 
-    upload_file = st.sidebar.file_uploader("上传你的测试文件(.csv或.xslx)")
+    upload_file = st.sidebar.file_uploader("**上传你的测试文件(.csv或.xslx)**")
 
     if not (uuid and authkey and authsecret and upload_file):
         st.button('开始批量测试！', disabled=True)
