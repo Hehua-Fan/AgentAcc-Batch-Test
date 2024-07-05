@@ -3,7 +3,7 @@ import json
 import re 
 import requests
 import pandas as pd
-from stqdm import stqdm
+from tqdm import tqdm
 
 def extract_json(text):
     if "```json" in text:
@@ -108,13 +108,13 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     num_correct, num_total = 0, df.shape[0]
     actual_output, judgement = [], []
 
-    for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
+    for i in tqdm(range(df.shape[0]), desc="当前测试进度"):
         prompt = df["prompt"][i]
         response = api_model(prompt, host, uuid, authkey, authsecret)
         tf = evaluate_model(response, df["expected_output"][i])
         actual_output.append(response)
         judgement.append(tf)
-        if tf:
+        if tf == "True":
             num_correct += 1
 
     df = pd.DataFrame(data={'提示词': df["prompt"],
@@ -140,5 +140,5 @@ if __name__ == "__main__":
     AuthKey = "49fc7957298f46c79a68738736d3680c"
     AuthSecret = "TQHqrhBv49NZf2n0B2aWJ7MqNzMYL7RE"
 
-    df = pd.read_csv('prompts.csv')
+    df = pd.read_csv('问答对.csv')
     evaluate_prompt(df, host, Uuid, AuthKey, AuthSecret)
