@@ -2,3 +2,4 @@ pandas
 streamlit
 openai
 stqdm
+openpyxl
