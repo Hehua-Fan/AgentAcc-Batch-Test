@@ -3,8 +3,7 @@ import json
 import re 
 import requests
 import pandas as pd
-pd.set_option('display.max_rows', None)
-from tqdm import tqdm
+from stqdm import stqdm
 
 def extract_json(text):
     if "```json" in text:
@@ -109,7 +108,7 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     correct = 0
     actual_output, judgement = [], []
 
-    for i in tqdm(range(df.shape[0])):
+    for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
         prompt = df["prompt"][i]
         response = api_model(prompt, host, uuid, authkey, authsecret)
         tf = evaluate_model(response, df["expected_output"][i])
