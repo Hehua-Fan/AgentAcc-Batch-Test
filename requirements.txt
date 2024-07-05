@@ -1,4 +1,4 @@
 pandas
 streamlit
 openai
-tqdm
+stqdm
