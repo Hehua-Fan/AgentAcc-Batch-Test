@@ -1,6 +1,6 @@
 import openai
 import json
-import re
+import re 
 import requests
 import pandas as pd
 pd.set_option('display.max_rows', None)
@@ -17,7 +17,7 @@ def extract_json(text):
     else:
         return text
 
-def evaluate_model(actual_output, expected_output, model_name):
+def evaluate_model(actual_output, expected_output):
     system_prompt = """
     # Role：文本内容一致性分析师
 
@@ -60,7 +60,7 @@ def evaluate_model(actual_output, expected_output, model_name):
     <文本2>{expected_output}</文本2>
     """
     response = openai.chat.completions.create(
-        model = model_name,
+        model = "glm-4",
         messages=[
             {"role":"system", "content":system_prompt},
             {"role":"user", "content":user_prompt}
@@ -79,19 +79,7 @@ def evaluate_model(actual_output, expected_output, model_name):
         return False
     return boolean
 
-def chat_model(prompt, model):
-    response = openai.chat.completions.create(
-        model= model,
-        messages=[
-            {"role":"system", "content":"i am llm model"},
-            {"role":"user", "content": prompt}
-        ],
-        top_p=0.7,
-        temperature=0.9
-    )
-    return response.choices[0].message.content
-
-def api_model(host, uuid, authKey, authSecret, prompt):
+def api_model(prompt, host, uuid, authKey, authSecret):
     url = host + "/openapi/agent/chat/completions/v1"
     headers = {
         "Authorization": f"Bearer {authKey}.{authSecret}"
@@ -110,23 +98,23 @@ def api_model(host, uuid, authKey, authSecret, prompt):
         try:
             # Try to parse the response as JSON
             json_response = response.json()
-            print("LLM Response:", json_response["choices"][0]["content"])
+            return json_response["choices"][0]["content"]
         except ValueError:
             # If the response is not JSON, print the raw text
             print("Response content is not in JSON format:", response.text)
     else:
         print(f"Request failed with status code {response.status_code}")
 
-def evaluate_prompt(df, model_name):
+def evaluate_prompt(df, host, uuid, authkey, authsecret):
     correct = 0
     actual_output, judgement = [], []
-    print(df)
 
     for i in tqdm(range(df.shape[0])):
-        response = chat_model(df["prompt"][i], model_name)
-        TF = evaluate_model(response, df["expected_output"][i],model_name)
+        prompt = df["prompt"][i]
+        response = api_model(prompt, host, uuid, authkey, authsecret)
+        tf = evaluate_model(response, df["expected_output"][i])
         actual_output.append(response)
-        judgement.append(TF)
+        judgement.append(tf)
         if judgement:
             correct += 1
 
@@ -148,14 +136,12 @@ if __name__ == "__main__":
     # 使用你的API密钥和基础URL初始化OpenAI客户端
     openai.api_key = "fe5f6afae5bfffb5c4fa148b061977a1.9Ep40DMGOnBb3FTo"
     openai.base_url = "https://open.bigmodel.cn/api/paas/v4/"
-    model_name = "glm-4"
     host = "https://uat.agentspro.cn"
 
     # 智能党建助手
-    uuid = "49fc7957298f46c79a68738736d3680c"
-    auth_key = "49fc7957298f46c79a68738736d3680c"
-    auth_secret = "TQHqrhBv49NZf2n0B2aWJ7MqNzMYL7RE"
+    Uuid = "49fc7957298f46c79a68738736d3680c"
+    AuthKey = "49fc7957298f46c79a68738736d3680c"
+    AuthSecret = "TQHqrhBv49NZf2n0B2aWJ7MqNzMYL7RE"
 
-    prompts = pd.read_csv('prompts.csv')
-    evaluate_prompt(prompts, model_name)
-    api_model(host, uuid, auth_key, auth_secret, prompt="1")
+    df = pd.read_csv('prompts.csv')
+    evaluate_prompt(df, host, Uuid, AuthKey, AuthSecret)
