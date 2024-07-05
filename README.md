@@ -1,4 +1,4 @@
-# agent-acc-batch-test
+# AgentAcc-batch-test
 ## Features
 * Upload question-answer pair csv file
 
