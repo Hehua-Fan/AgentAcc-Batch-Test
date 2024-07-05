@@ -1,6 +1,6 @@
 import openai
 import json
-import re 
+import re
 import requests
 import pandas as pd
 pd.set_option('display.max_rows', None)
