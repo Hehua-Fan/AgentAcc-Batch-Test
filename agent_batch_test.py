@@ -109,17 +109,17 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
-        prompt = df["prompt"][i]
+        prompt = df.iloc[i,0]
         response = api_model(prompt, host, uuid, authkey, authsecret)
-        tf = evaluate_model(response, df["expected_output"][i])
+        tf = evaluate_model(response, df.iloc[i,1])
         actual_output.append(response)
         judgement.append(tf)
         if tf == "True":
             num_correct += 1
 
-    df = pd.DataFrame(data={'提示词': df["prompt"],
-                       '期望输出': df["expected_output"],
-                       '实际输出': actual_output,
+    df = pd.DataFrame(data={'提示词': df.iloc[:,0],
+                       '期望输出': df.iloc[:,1],
+                       'Agent实际输出': actual_output,
                        '是否准确': judgement})
 
     df.to_csv("evaluation.csv", index=False)

@@ -3,3 +3,5 @@ streamlit
 openai
 stqdm
 openpyxl
+streamlit-aggrid
+plotly

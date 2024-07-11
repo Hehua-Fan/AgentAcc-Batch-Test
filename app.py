@@ -2,7 +2,54 @@ import streamlit as st
 import pandas as pd
 import openai
 from agent_batch_test import evaluate_prompt
+from st_aggrid import AgGrid, GridOptionsBuilder
+import plotly.graph_objects as go
 
+# 加载数据函数
+def load_data(file):
+    if file.name.endswith('.csv'):
+        return pd.read_csv(file)
+    elif file.name.endswith('.xlsx'):
+        return pd.read_excel(file)
+    else:
+        st.error("不支持的文件格式。请上传 .csv 或 .xlsx 文件。")
+        return None
+
+def parse_info(info_str):
+    info_dict = {}
+    # 以空格分割
+    segments = info_str.split()
+    for segment in segments:
+        # 以冒号分割键值对
+        key, value = segment.split("：")
+        info_dict[key.strip()] = value.strip()
+    return info_dict
+
+# 获取默认数据函数
+def get_default_data():
+    return pd.DataFrame({
+        '提示词': ["（示例）中国的首都在哪里？"],
+        '期望输出': ["北京"]
+    })
+
+# 创建AgGrid表格函数
+def create_aggrid(df, editable=True):
+    # gb = GridOptionsBuilder.from_dataframe(df)
+    # gb.configure_default_column(editable=editable, filterable=True)
+    # gridOptions = gb.build()
+    # return AgGrid(
+    #     df,
+    #     gridOptions=gridOptions,
+    #     data_return_mode='AS_INPUT',
+    #     update_mode='MODEL_CHANGED',
+    #     fit_columns_on_grid_load=True,
+    #     theme='streamlit',
+    #     height=400,
+    #     width='100%'
+    # )
+    
+    edited_df = st.data_editor(df, num_rows="dynamic")
+    return edited_df
 
 def main():
     # 固定变量
@@ -11,57 +58,93 @@ def main():
     openai.base_url = "https://open.bigmodel.cn/api/paas/v4/"
 
     # 网页设置
-    st.set_page_config(page_title="AgentAcc Batch Test", layout="wide", page_icon="page_icon.jpg")
-    css = """
-       <style>
-       [data-testid="stSidebar"][aria-expanded="true"]{
-           min-width: 450px;
-           max-width: 450px;
-       }
-       """
-    st.markdown(css, unsafe_allow_html=True)
+    st.set_page_config(page_title="AgentAcc Batch Test", layout="wide", page_icon="🎯")
+    
+    st.markdown("""
+        <style>
+        .main .block-container {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .stAlert {
+            margin-top: 1rem;
+        }
+        .st-emotion-cache-1y4p8pa {
+            max-width: 1000px;
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    # 主页面
-    st.title("Agent准确率批量测试:sunglasses:")
-    st.write("""目前仅支持单轮对话""")
+    # 主页面标题
+    st.title("Agent准确率批量测试 🚀")
 
     # 侧边栏
-    st.sidebar.write("**请先下载问答对模板，在本地制作好问答对**")
-    df_template = pd.DataFrame(data={'提示词': ["（示例）中国的首都在哪里？"], '期望输出': ["北京"]})
-    df_template.to_excel("template.xlsx", index=False)
-    with open('template.xlsx', 'rb') as f:
-        st.sidebar.download_button('问答对模板.xlsx', f, file_name='问答对模板.xlsx')
-    st.sidebar.write("**以下内容位置：你的Agent - 右上角三个点 - 发布 - API Key**")
-    uuid = st.sidebar.text_input("**Uuid**", placeholder="请输入uuid")
-    authkey = st.sidebar.text_input("**AuthKey**", placeholder="请输入AuthKey")
-    authsecret = st.sidebar.text_input("**AuthSecret**", placeholder="请输入AuthSecret")
-    upload_file = st.sidebar.file_uploader("**上传你的测试文件(.csv或.xslx)，目前仅支持单文件**")
+    with st.sidebar:
+        with st.expander("📥 下载测试模板"):
+            st.write("可在本地编辑测试模版")
+            default_df = get_default_data()
+            csv = default_df.to_csv(index=False)
+            st.download_button('下载测试模板.csv', csv, file_name='测试模板.csv')
 
-    # 处理用户无意输入的空格
-    uuid = uuid.strip()
-    authkey = authkey.strip()
-    authsecret = authsecret.strip()
+        with st.expander("🤖 Agent信息填写"):
+            st.write("**Agent信息查询：**")
+            st.write("**我的Agent - 发布 - API服务**")
 
-    # 确保输入信息完整，才可进行测试
-    if not (uuid and authkey and authsecret and upload_file):
-        st.button('开始批量测试！', disabled=True)
-        st.warning('请在侧边栏输入所有信息')
+            allinfo = st.text_input("**快速输入**", placeholder="点击API服务的复制按钮", key="allinfo").strip()
+
+            # 初始值
+            uuid = ""
+            authkey = ""
+            authsecret = ""
+
+            if allinfo:
+                parsed_info = parse_info(allinfo)
+                uuid = parsed_info.get("Uuid", "")
+                authkey = parsed_info.get("AuthKey", "")
+                authsecret = parsed_info.get("AuthSecret", "")
+
+            # 这里使用解析后的值填充输入框，并给每个输入框设置唯一的 key
+            uuid = st.text_input("**Uuid***", value=uuid, placeholder="请输入uuid", key="uuid").strip()
+            authkey = st.text_input("**AuthKey***", value=authkey, placeholder="请输入AuthKey", key="authkey").strip()
+            authsecret = st.text_input("**AuthSecret***", value=authsecret, placeholder="请输入AuthSecret", key="authsecret").strip()
+            
+        upload_file = st.file_uploader("**上传你的测试模版(.csv或.xlsx)**")
+
+    # 数据加载和显示
+    if upload_file is None:
+        df = get_default_data()
     else:
-        # 兼容csv和xlsx
-        if upload_file.name.endswith('.csv'):
-            df = pd.read_csv(upload_file)
-        elif upload_file.name.endswith('.xlsx'):
-            df = pd.read_excel(upload_file)
-        st.dataframe(df, width=1800, height=400)
-        # 开始批量测试
-        if st.button('开始批量测试！'):
+        df = load_data(upload_file)
+        if df is not None and 'Agent回答' not in df.columns:
+            df['Agent回答'] = ''
+        if df is not None and '是否正确' not in df.columns:
+            df['是否正确'] = ''
+
+    st.subheader("📊 测试数据")
+    start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
+
+    grid_response = create_aggrid(df)
+    # df = grid_response['data']
+    df = grid_response
+
+    if not all([uuid, authkey, authsecret]):
+        st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
+    elif start_test:
+        with st.spinner('正在进行测试...'):
             result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
-            st.dataframe(result_df, width=1800, height=400)
-            st.write(f"Agent回答准确率: {acc}")
-            # 下载测试结果文件
-            result_df.to_csv('result.csv', index=False)
-            with open('result.csv', 'rb') as f:
-                st.download_button('下载测试结果文件', f, file_name='result.csv')
+        
+        # 更新原有表格的数据
+        df['Agent实际输出'] = result_df['Agent实际输出']
+        df['是否准确'] = result_df['是否准确']
+
+        st.write("") 
+        st.subheader("🔍 测试结果")
+        st.metric("Agent回答准确率：", f"{acc:.2%}")
+        create_aggrid(df, editable=False)
+
+        # 下载测试结果文件
+        csv = df.to_csv(index=False)
+        st.download_button('📥 下载测试结果文件', csv, file_name='测试结果.csv')
 
 
 if __name__ == '__main__':
