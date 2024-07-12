@@ -134,8 +134,8 @@ def main():
             result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
         
         # 更新原有表格的数据
-        df['Agent实际输出'] = result_df['Agent实际输出']
-        df['是否准确'] = result_df['是否准确']
+        df['Agent回答'] = result_df['Agent实际输出']
+        df['是否正确'] = result_df['是否准确']
 
         st.write("") 
         st.subheader("🔍 测试结果")
