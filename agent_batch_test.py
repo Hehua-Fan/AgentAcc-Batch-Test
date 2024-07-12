@@ -109,9 +109,10 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
                        '期望输出': df.iloc[:,1],
                        'Agent实际输出': actual_output,
                        '是否准确': judgement})
-
+    print(df)
     df.to_csv("evaluation.csv", index=False)
     accuracy = num_correct / num_total
+    print(accuracy)
 
     return df, accuracy
 
