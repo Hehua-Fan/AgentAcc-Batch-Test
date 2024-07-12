@@ -132,6 +132,7 @@ def main():
     elif start_test:
         with st.spinner('正在进行测试...'):
             result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
+            st.write(result_df,acc)
         
         # 更新原有表格的数据
         df['Agent回答'] = result_df['Agent实际输出']
