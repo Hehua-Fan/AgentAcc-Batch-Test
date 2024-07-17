@@ -1,9 +1,8 @@
 # AgentAcc-Batch-Test
 ![alt text](src/img.png)
-## Features
-* Upload question-answer pair csv file
 
 ## Quick Start
+There is a website can be used directly to demo.
 >https://agentacc-batch-test.streamlit.app/
 
 ## Get Started
@@ -31,4 +30,8 @@ streamlit run app.py
 ```
 
 ## Possible Improvements
+* 输入个人的API_KEY
+* 限制问答对生成组数，限制批量测试数量
+* 点击其他按钮或空白处会重新刷新页面，导致数据丢失
+* 流式输出测试结果
 * support multi-round dialogue
