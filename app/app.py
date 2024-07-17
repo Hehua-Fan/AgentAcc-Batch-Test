@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
 import openai
-from agent_batch_test import evaluate_prompt, qa_pair_generator, create_aggrid
+from agent_batch_test import evaluate_prompt, qa_pair_generator
+from st_aggrid import AgGrid, GridOptionsBuilder
 import plotly.graph_objects as go
 from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 
@@ -32,6 +33,25 @@ def get_default_data():
         '期望输出': ["北京"]
     })
 
+# 创建AgGrid表格函数
+def create_aggrid(df, editable=True):
+    # gb = GridOptionsBuilder.from_dataframe(df)
+    # gb.configure_default_column(editable=editable, filterable=True)
+    # gridOptions = gb.build()
+    # return AgGrid(
+    #     df,
+    #     gridOptions=gridOptions,
+    #     data_return_mode='AS_INPUT',
+    #     update_mode='MODEL_CHANGED',
+    #     fit_columns_on_grid_load=True,
+    #     theme='streamlit',
+    #     height=400,
+    #     width='100%'
+    # )
+    
+    edited_df = st.data_editor(df, num_rows="dynamic")
+    return edited_df
+
 def main():
     # 固定变量
     host = AUTOAGENTS_HOST_NAME
@@ -47,8 +67,7 @@ def main():
            min-width: 450px;
            max-width: 450px;
        }
-       </style>
-    """
+       """
     st.markdown(css, unsafe_allow_html=True)
 
     # 主页面标题
@@ -85,7 +104,7 @@ def main():
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             default_df = get_default_data()
-            default_df.to_excel('测试模板.xlsx', index=False)
+            default_df.to_excel('测试模板.xlsx',index=False)
             with open('测试模板.xlsx', 'rb') as f_template:
                 st.download_button('下载测试结果文件.xlsx', f_template, file_name='测试模板.xlsx')
 
@@ -114,36 +133,42 @@ def main():
         upload_file = st.file_uploader("**上传你的测试模版(.csv或.xlsx)**")
 
     # 数据加载和显示
-    if 'df' not in st.session_state:
-        if upload_file is None:
-            st.session_state.df = get_default_data()
-        else:
-            st.session_state.df = load_data(upload_file)
-            if st.session_state.df is not None and 'Agent回答' not in st.session_state.df.columns:
-                st.session_state.df['Agent回答'] = ''
-            if st.session_state.df is not None and '是否正确' not in st.session_state.df.columns:
-                st.session_state.df['是否正确'] = ''
+    if upload_file is None:
+        df = get_default_data()
+    else:
+        df = load_data(upload_file)
+        if df is not None and 'Agent回答' not in df.columns:
+            df['Agent回答'] = ''
+        if df is not None and '是否正确' not in df.columns:
+            df['是否正确'] = ''
 
     st.subheader("📊 测试数据")
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
-    create_aggrid(st.session_state.df)
+    grid_response = create_aggrid(df)
+    # df = grid_response['data']
+    df = grid_response
 
     if not all([uuid, authkey, authsecret]):
         st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
     elif start_test:
         with st.spinner('正在进行测试...'):
-            result_df, acc = evaluate_prompt(st.session_state.df, host, uuid, authkey, authsecret)
+            result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
         
-        st.write("")
+        # 更新原有表格的数据
+        df['Agent回答'] = result_df['Agent实际输出']
+        df['是否正确'] = result_df['是否准确']
+
+        st.write("") 
         st.subheader("🔍 测试结果")
         st.metric("Agent回答准确率：", f"{acc:.2%}")
-        create_aggrid(result_df, editable=False)
+        create_aggrid(df, editable=False)
 
         # 下载测试结果文件
-        result_df.to_excel('测试结果.xlsx', index=False)
+        df.to_excel('测试结果.xlsx',index=False)
         with open('测试结果.xlsx', 'rb') as f_res:
-            st.download_button('下载测试结果文件.xlsx', f_res, file_name='测试结果.xlsx')
+                st.download_button('下载测试结果文件.xlsx', f_res, file_name='测试结果.xlsx')
+
 
 if __name__ == '__main__':
     main()

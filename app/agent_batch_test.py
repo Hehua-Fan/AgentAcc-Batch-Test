@@ -6,8 +6,6 @@ import pandas as pd
 from stqdm import stqdm
 from zhipuai import ZhipuAI
 from configs import ZHIPU_AI_API_KEY
-import streamlit as st
-from st_aggrid import AgGrid, GridOptionsBuilder
 
 def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     system_prompt = """
@@ -143,41 +141,25 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
-        prompt = df.iloc[i, 0]
+        prompt = df.iloc[i,0]
         response = api_model(prompt, host, uuid, authkey, authsecret)
-        tf = evaluate_model(prompt, response, df.iloc[i, 1])
+        tf = evaluate_model(prompt, response, df.iloc[i,1])
         actual_output.append(response)
         judgement.append(tf)
         if tf == "True":
             num_correct += 1
 
-        # Update DataFrame with current results
-        st.session_state.df.at[i, 'Agent回答'] = response
-        st.session_state.df.at[i, '是否正确'] = tf
+    df = pd.DataFrame(data={'提示词': df.iloc[:,0],
+                       '期望输出': df.iloc[:,1],
+                       'Agent实际输出': actual_output,
+                       '是否准确': judgement})
 
-        # Rerender the AgGrid component
-        with st.empty():
-            create_aggrid(st.session_state.df, editable=False)
-
+    df.to_csv("evaluation.csv", index=False)
     accuracy = num_correct / num_total
+    
 
-    return st.session_state.df, accuracy
+    return df, accuracy
 
-# 创建AgGrid表格函数
-def create_aggrid(df, editable=True):
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_default_column(editable=editable, filterable=True)
-    gridOptions = gb.build()
-    return AgGrid(
-        df,
-        gridOptions=gridOptions,
-        data_return_mode='AS_INPUT',
-        update_mode='MODEL_CHANGED',
-        fit_columns_on_grid_load=True,
-        theme='streamlit',
-        height=400,
-        width='100%'
-    )
 
 
 if __name__ == "__main__":
