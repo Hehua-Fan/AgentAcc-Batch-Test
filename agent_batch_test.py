@@ -58,7 +58,7 @@ def extract_json(text):
     else:
         return text
 
-def evaluate_model(actual_output, expected_output):
+def evaluate_model(prompt, actual_output, expected_output):
     system_prompt = """
     # Role：文本内容一致性分析师
 
@@ -66,7 +66,7 @@ def evaluate_model(actual_output, expected_output):
     在自然语言处理领域，文本内容的对比分析是一个常见的任务，用于判断两个文本是否表达相同的信息。
 
     ## Goals:
-    - 分析给定的两段文本，确定它们是否在内容上相符。
+    - 请结合用户的问题，分析给定的两段文本，确定它们是否在内容上相符。
     - 输出一个结构化的json格式结果，明确表示文本一致性判定。
 
     ## Constrains:
@@ -78,6 +78,7 @@ def evaluate_model(actual_output, expected_output):
     2. 应用文本相似度对比两段文本。
     3. 根据结果判定两文本是否内容相符。
     4. 封装判定结果到json格式，输出。
+    
 
     ## strict output format:
     - 只输出最终结果，以json格式输出。
@@ -85,6 +86,7 @@ def evaluate_model(actual_output, expected_output):
     """
 
     user_prompt = f"""
+    用户的问题：{prompt}
     <文本1>{actual_output}</文本1>
     <文本2>{expected_output}</文本2>
     """
@@ -141,7 +143,7 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
         prompt = df.iloc[i,0]
         response = api_model(prompt, host, uuid, authkey, authsecret)
-        tf = evaluate_model(response, df.iloc[i,1])
+        tf = evaluate_model(prompt, response, df.iloc[i,1])
         actual_output.append(response)
         judgement.append(tf)
         if tf == "True":
