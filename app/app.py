@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import openai
-from agent_batch_test import evaluate_prompt, qa_pair_generator
+from agent_batch_test import evaluate_prompt, qa_pair_generator, create_aggrid
 import plotly.graph_objects as go
 from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 
