@@ -85,16 +85,18 @@ def main():
             if start_qa_generator:
                 with st.spinner('正在进行生成...'):
                     qa_pair_df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context)
-                    qa_pair_csv = qa_pair_df.to_excel('生成的问答对.xlsx',index=False)
-                st.download_button('下载生成的问答对.excel', qa_pair_csv, file_name='生成的问答对.xlsx')
+                    qa_pair_df.to_excel('生成的问答对.xlsx',index=False)
+                with open('生成的问答对.xlsx', 'rb') as f_qa:
+                    st.download_button('下载生成的问答对', f_qa, file_name='生成的问答对.xlsx')
             else:
                 st.warning('请描述想要生成的问答对')
             
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             default_df = get_default_data()
-            csv = default_df.to_excel('测试模板.xlsx',index=False)
-            st.download_button('下载测试模板.xlsx', csv, file_name='测试模板.xlsx')
+            default_df.to_excel('测试模板.xlsx',index=False)
+            with open('测试模板.xlsx', 'rb') as f_template:
+                st.download_button('下载测试结果文件', f_template, file_name='测试模板.xlsx')
 
         with st.expander("🤖 Agent信息填写"):
             st.write("**Agent信息查询：**")
