@@ -10,8 +10,8 @@ from configs import ZHIPU_AI_API_KEY
 def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     system_prompt = """
     # Role：请根据我的主题和问题，帮我生成我想要的问答对
-    # Format
-    请以json格式输出，以Question, Answer作为Key，以下是示例，只是在向你展示格式：
+    # Strict Output Format
+    以Question, Answer作为Key，以下是格式示例：
     {
         "Question": [
             "为什么我的服务这么慢？",
