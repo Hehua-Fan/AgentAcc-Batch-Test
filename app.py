@@ -85,7 +85,7 @@ def main():
             if start_qa_generator:
                 with st.spinner('正在进行生成...'):
                     qa_pair_df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context)
-                    qa_pair_csv = qa_pair_df.to_excel(index=False)
+                    qa_pair_csv = qa_pair_df.to_excel('生成的问答对.excel',index=False)
                 st.download_button('下载生成的问答对.excel', qa_pair_csv, file_name='生成的问答对.excel')
             else:
                 st.warning('请描述想要生成的问答对')
@@ -93,7 +93,7 @@ def main():
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             default_df = get_default_data()
-            csv = default_df.to_excel(index=False)
+            csv = default_df.to_excel('生成的问答对.excel',index=False)
             st.download_button('下载测试模板.xlsx', csv, file_name='测试模板.xlsx')
 
         with st.expander("🤖 Agent信息填写"):
@@ -153,8 +153,8 @@ def main():
         create_aggrid(df, editable=False)
 
         # 下载测试结果文件
-        csv = df.to_excel(index=False)
-        st.download_button('📥 下载测试结果文件', csv, file_name='测试结果.excel')
+        csv = df.to_excel('测试结果.xlsx',index=False)
+        st.download_button('📥 下载测试结果文件', csv, file_name='测试结果.xlsx')
 
 
 if __name__ == '__main__':
