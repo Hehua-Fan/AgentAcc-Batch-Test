@@ -41,9 +41,9 @@ def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     )
     
     response_str = response.choices[0].message.content
-    response_json = json.loads(response_str)
-    
-    df = pd.DataFrame(response_json)
+    response_str_extracted = response_str.split('`json')[1].split('`')[0].strip()
+    response_json = json.loads(response_str_extracted)
+    df = pd.DataFrame.from_dict(response_json)
     
     return df
 
