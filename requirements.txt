@@ -5,3 +5,4 @@ stqdm
 openpyxl
 streamlit-aggrid
 plotly
+zhipuai
