@@ -6,6 +6,7 @@ import pandas as pd
 from stqdm import stqdm
 from zhipuai import ZhipuAI
 from configs import ZHIPU_AI_API_KEY
+import streamlit as st
 
 def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     system_prompt = """
@@ -141,24 +142,25 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
-        prompt = df.iloc[i,0]
+        prompt = df.iloc[i, 0]
         response = api_model(prompt, host, uuid, authkey, authsecret)
-        tf = evaluate_model(prompt, response, df.iloc[i,1])
+        tf = evaluate_model(prompt, response, df.iloc[i, 1])
         actual_output.append(response)
         judgement.append(tf)
         if tf == "True":
             num_correct += 1
 
-    df = pd.DataFrame(data={'提示词': df.iloc[:,0],
-                       '期望输出': df.iloc[:,1],
-                       'Agent实际输出': actual_output,
-                       '是否准确': judgement})
+        # Update DataFrame with current results
+        df.at[i, 'Agent回答'] = response
+        df.at[i, '是否正确'] = tf
 
-    df.to_csv("evaluation.csv", index=False)
+        # Show updated results in Streamlit
+        st.write(df)
+
     accuracy = num_correct / num_total
-    
 
     return df, accuracy
+
 
 
 

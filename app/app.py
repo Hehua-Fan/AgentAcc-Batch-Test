@@ -67,7 +67,8 @@ def main():
            min-width: 450px;
            max-width: 450px;
        }
-       """
+       </style>
+    """
     st.markdown(css, unsafe_allow_html=True)
 
     # 主页面标题
@@ -104,7 +105,7 @@ def main():
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             default_df = get_default_data()
-            default_df.to_excel('测试模板.xlsx',index=False)
+            default_df.to_excel('测试模板.xlsx', index=False)
             with open('测试模板.xlsx', 'rb') as f_template:
                 st.download_button('下载测试结果文件.xlsx', f_template, file_name='测试模板.xlsx')
 
@@ -146,7 +147,6 @@ def main():
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
     grid_response = create_aggrid(df)
-    # df = grid_response['data']
     df = grid_response
 
     if not all([uuid, authkey, authsecret]):
@@ -155,19 +155,15 @@ def main():
         with st.spinner('正在进行测试...'):
             result_df, acc = evaluate_prompt(df, host, uuid, authkey, authsecret)
         
-        # 更新原有表格的数据
-        df['Agent回答'] = result_df['Agent实际输出']
-        df['是否正确'] = result_df['是否准确']
-
-        st.write("") 
+        st.write("")
         st.subheader("🔍 测试结果")
         st.metric("Agent回答准确率：", f"{acc:.2%}")
         create_aggrid(df, editable=False)
 
         # 下载测试结果文件
-        df.to_excel('测试结果.xlsx',index=False)
+        df.to_excel('测试结果.xlsx', index=False)
         with open('测试结果.xlsx', 'rb') as f_res:
-                st.download_button('下载测试结果文件.xlsx', f_res, file_name='测试结果.xlsx')
+            st.download_button('下载测试结果文件.xlsx', f_res, file_name='测试结果.xlsx')
 
 
 if __name__ == '__main__':
