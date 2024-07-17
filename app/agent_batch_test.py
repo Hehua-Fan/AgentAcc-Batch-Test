@@ -39,13 +39,22 @@ def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
             {"role": "user", "content": user_prompt}
         ],
     )
-    
+
     response_str = response.choices[0].message.content
-    response_str_extracted = response_str.split('`json')[1].split('`')[0].strip()
-    response_json = json.loads(response_str_extracted)
-    df = pd.DataFrame.from_dict(response_json)
+
+    if '`json' in response_str:
+        response_str_extracted = response_str.split('`json')[1].split('`')[0].strip()
+    else:
+        response_str_extracted = response_str.strip()
     
-    return df
+    try:
+        response_json = json.loads(response_str_extracted)
+        df = pd.DataFrame.from_dict(response_json)
+        return df
+    except json.JSONDecodeError as e:
+        print("Error decoding JSON:", e)
+        return None
+    
 
 def extract_json(text):
     if "```json" in text:
