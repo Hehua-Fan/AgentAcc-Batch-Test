@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import openai
 from agent_batch_test import evaluate_prompt, qa_pair_generator
-from st_aggrid import AgGrid, GridOptionsBuilder
 import plotly.graph_objects as go
 from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 
@@ -79,7 +78,7 @@ def main():
         with st.expander("💡 问答对生成器（选用工具）"):
             st.write("如果报错，很可能是由于敏感词问题")
             
-            num_group = st.text_input("**问答对组数（选填）***", placeholder="默认：5组").strip()
+            num_group = st.text_input("**问答对组数（选填）***", placeholder="默认：5组（最大组数为12）").strip()
             context = st.text_area("**背景信息（选填）***", placeholder="默认：无，例如：这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业").strip()
             question = st.text_input("**期望问题（必填）**", placeholder="例如：客户的电话投诉").strip()
             answer = st.text_input("**期望回答（必填）**", placeholder="例如：标准而礼貌的客服回复").strip()
@@ -90,6 +89,10 @@ def main():
                 with st.spinner('正在进行生成...'):
                     # Provide default context if not supplied
                     default_num_group = "5" if not num_group else num_group
+                    if int(default_num_group) > 12:
+                        default_num_group = "12"
+                    elif int(default_num_group) < 1:
+                        default_num_group = "1"
                     default_context = "这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业" if not context else context
                     
                     qa_pair_df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, default_num_group, default_context)
