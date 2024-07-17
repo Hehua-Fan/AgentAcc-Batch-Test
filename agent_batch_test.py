@@ -7,7 +7,7 @@ from stqdm import stqdm
 from zhipuai import ZhipuAI
 from configs import ZHIPU_AI_API_KEY
 
-def qa_pair_generator(topic, ZHIPU_AI_API_KEY):
+def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     system_prompt = """
     # Role：请根据我的主题和问题，帮我生成我想要的问答对
     # Format
@@ -25,7 +25,10 @@ def qa_pair_generator(topic, ZHIPU_AI_API_KEY):
     """
 
     user_prompt = f"""
-    <文本1>{topic}</文本1>
+    我想生成的问答组数为{num_group},
+    应用背景为{context},
+    问题为{question},
+    回答为{answer}
     """
 
     client = ZhipuAI(api_key=ZHIPU_AI_API_KEY)

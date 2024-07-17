@@ -83,11 +83,14 @@ def main():
     with st.sidebar:
         # 问答对生成器
         with st.expander("💡 问答对生成器（选用工具）"):
-            topic = st.text_area("**问答对主题***", placeholder="帮我生成一组问答对，问题是客户的电话投诉，回答是标准而礼貌的客服回复").strip()
-            start_qa_generator = st.button('🚀 开始生成问答对！', disabled=not topic)
+            num_group = st.text_input("**问答对组数（选填）***",placeholder="默认5组").strip()
+            context = st.text_input("**应用背景（选填）***",placeholder="默认为无").strip()
+            question = st.text_input("**期望问题（必填）***",placeholder="客户的电话投诉").strip()
+            answer = st.text_input("**期望回答（必填）***",placeholder="标准而礼貌的客服回复").strip()
+            start_qa_generator = st.button('🚀 开始生成问答对！', disabled=not all([question, answer]))
             if start_qa_generator:
                 with st.spinner('正在进行生成...'):
-                    qa_pair_df = qa_pair_generator(topic, ZHIPU_AI_API_KEY)
+                    qa_pair_df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context)
                     qa_pair_csv = qa_pair_df.to_csv(index=False)
                 st.download_button('下载生成的问答对.csv', qa_pair_csv, file_name='生成的问答对.csv')
             else:
