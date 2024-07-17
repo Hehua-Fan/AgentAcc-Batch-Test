@@ -7,7 +7,7 @@ from stqdm import stqdm
 from zhipuai import ZhipuAI
 from configs import ZHIPU_AI_API_KEY
 import streamlit as st
-from app import create_aggrid
+from st_aggrid import AgGrid, GridOptionsBuilder
 
 def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context):
     system_prompt = """
@@ -163,7 +163,21 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
 
     return st.session_state.df, accuracy
 
-
+# 创建AgGrid表格函数
+def create_aggrid(df, editable=True):
+    gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_default_column(editable=editable, filterable=True)
+    gridOptions = gb.build()
+    return AgGrid(
+        df,
+        gridOptions=gridOptions,
+        data_return_mode='AS_INPUT',
+        update_mode='MODEL_CHANGED',
+        fit_columns_on_grid_load=True,
+        theme='streamlit',
+        height=400,
+        width='100%'
+    )
 
 
 if __name__ == "__main__":

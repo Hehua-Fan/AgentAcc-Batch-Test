@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import openai
 from agent_batch_test import evaluate_prompt, qa_pair_generator
-from st_aggrid import AgGrid, GridOptionsBuilder
 import plotly.graph_objects as go
 from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 
@@ -32,22 +31,6 @@ def get_default_data():
         '提示词': ["（示例）中国的首都在哪里？"],
         '期望输出': ["北京"]
     })
-
-# 创建AgGrid表格函数
-def create_aggrid(df, editable=True):
-    gb = GridOptionsBuilder.from_dataframe(df)
-    gb.configure_default_column(editable=editable, filterable=True)
-    gridOptions = gb.build()
-    return AgGrid(
-        df,
-        gridOptions=gridOptions,
-        data_return_mode='AS_INPUT',
-        update_mode='MODEL_CHANGED',
-        fit_columns_on_grid_load=True,
-        theme='streamlit',
-        height=400,
-        width='100%'
-    )
 
 def main():
     # 固定变量
