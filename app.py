@@ -155,8 +155,9 @@ def main():
         create_aggrid(df, editable=False)
 
         # 下载测试结果文件
-        csv = df.to_excel('测试结果.xlsx',index=False)
-        st.download_button('📥 下载测试结果文件', csv, file_name='测试结果.xlsx')
+        df.to_excel('测试结果.xlsx',index=False)
+        with open('测试结果.xlsx', 'rb') as f_res:
+                st.download_button('下载测试结果文件', f_res, file_name='测试结果.xlsx')
 
 
 if __name__ == '__main__':
