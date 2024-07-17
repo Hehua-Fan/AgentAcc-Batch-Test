@@ -77,8 +77,8 @@ def main():
     with st.sidebar:
         # 问答对生成器
         with st.expander("💡 问答对生成器（选用工具）"):
-            num_group = st.text_input("**问答对组数（选填）***",placeholder="默认：5组").strip()
-            context = st.text_input("**应用背景（选填）***",placeholder="默认：无").strip()
+            num_group = st.text_input("**问答对组数（选填）***",value="5", placeholder="默认：5组").strip()
+            context = st.text_input("**应用背景（选填）***",value="", placeholder="默认：无").strip()
             question = st.text_input("**期望问题（必填）***",placeholder="例如：客户的电话投诉").strip()
             answer = st.text_input("**期望回答（必填）***",placeholder="例如：标准而礼貌的客服回复").strip()
             start_qa_generator = st.button('🚀 开始生成问答对！', disabled=not all([question, answer]))
