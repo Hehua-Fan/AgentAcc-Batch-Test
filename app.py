@@ -84,8 +84,9 @@ def main():
         with st.expander("💡 问答对生成器（选用）"):
             topic = st.text_input("**问答对主题***", placeholder="请描述一下你想要生成的问答对以及多少组").strip()
             with st.spinner('正在进行生成...'):
-                qa_csv = qa_pair_generator(topic, ZHIPU_AI_API_KEY)
-            st.download_button('下载生成的问答对.csv', qa_csv, file_name='生成的问答对.csv')
+                qa_pair_df = qa_pair_generator(topic, ZHIPU_AI_API_KEY)
+                qa_pair_csv = qa_pair_df.to_csv(index=False)
+            st.download_button('下载生成的问答对.csv', qa_pair_csv, file_name='生成的问答对.csv')
 
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
