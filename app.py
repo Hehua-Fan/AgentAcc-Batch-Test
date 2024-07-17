@@ -80,7 +80,7 @@ def main():
             st.write("如果报错，很可能是由于敏感词问题")
             
             num_group = st.text_input("**问答对组数（选填）***", placeholder="默认：5组").strip()
-            context = st.text_input("**背景信息（选填）***", placeholder="默认：无，例如：这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业").strip()
+            context = st.text_area("**背景信息（选填）***", placeholder="默认：无，例如：这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业").strip()
             question = st.text_input("**期望问题（必填）***", placeholder="例如：客户的电话投诉").strip()
             answer = st.text_input("**期望回答（必填）***", placeholder="例如：标准而礼貌的客服回复").strip()
             
