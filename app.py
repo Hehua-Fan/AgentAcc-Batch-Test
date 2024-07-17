@@ -61,20 +61,14 @@ def main():
     # 网页设置
     st.set_page_config(page_title="AgentAcc Batch Test", layout="wide", page_icon="🎯")
     
-    st.markdown("""
-        <style>
-        .main .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        .stAlert {
-            margin-top: 1rem;
-        }
-        .st-emotion-cache-1y4p8pa {
-            max-width: 1000px;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+    css = """
+       <style>
+       [data-testid="stSidebar"][aria-expanded="true"]{
+           min-width: 450px;
+           max-width: 450px;
+       }
+       """
+    st.markdown(css, unsafe_allow_html=True)
 
     # 主页面标题
     st.title("Agent准确率批量测试 🚀")
@@ -83,10 +77,10 @@ def main():
     with st.sidebar:
         # 问答对生成器
         with st.expander("💡 问答对生成器（选用工具）"):
-            num_group = st.text_input("**问答对组数（选填）***",placeholder="默认5组").strip()
-            context = st.text_input("**应用背景（选填）***",placeholder="默认为无").strip()
-            question = st.text_input("**期望问题（必填）***",placeholder="客户的电话投诉").strip()
-            answer = st.text_input("**期望回答（必填）***",placeholder="标准而礼貌的客服回复").strip()
+            num_group = st.text_input("**问答对组数（选填）***",placeholder="默认：5组").strip()
+            context = st.text_input("**应用背景（选填）***",placeholder="默认：无").strip()
+            question = st.text_input("**期望问题（必填）***",placeholder="例如：客户的电话投诉").strip()
+            answer = st.text_input("**期望回答（必填）***",placeholder="例如：标准而礼貌的客服回复").strip()
             start_qa_generator = st.button('🚀 开始生成问答对！', disabled=not all([question, answer]))
             if start_qa_generator:
                 with st.spinner('正在进行生成...'):
