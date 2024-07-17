@@ -4,6 +4,45 @@ import re
 import requests
 import pandas as pd
 from stqdm import stqdm
+from zhipuai import ZhipuAI
+from configs import ZHIPU_AI_API_KEY
+
+def qa_pair_generator(topic, ZHIPU_AI_API_KEY):
+    system_prompt = """
+    # Role：请根据我的主题和问题，帮我生成我想要的问答对
+    # Format
+    请以json格式输出，以Question, Answer作为Key，直接书写问题和回答，不需要冒号，例如：
+    {
+        "Question": [
+            "问题1",
+            "问题2"
+        ],
+        "Answer": [
+            "回答1",
+            "回答2"
+        ]
+    }   
+    """
+
+    user_prompt = f"""
+    <文本1>{topic}</文本1>
+    """
+
+    client = ZhipuAI(api_key=ZHIPU_AI_API_KEY)
+    response = client.chat.completions.create(
+        model="glm-4",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+    )
+    
+    response_str = response.choices[0].message.content
+    response__json = json.loads(response_str)
+    
+    df = pd.DataFrame(response__json)
+    
+    return df
 
 def extract_json(text):
     if "```json" in text:
@@ -115,6 +154,7 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
     
 
     return df, accuracy
+
 
 
 if __name__ == "__main__":

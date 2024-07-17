@@ -1,9 +1,10 @@
 import streamlit as st
 import pandas as pd
 import openai
-from agent_batch_test import evaluate_prompt
+from agent_batch_test import evaluate_prompt, qa_pair_generator
 from st_aggrid import AgGrid, GridOptionsBuilder
 import plotly.graph_objects as go
+from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 
 # 加载数据函数
 def load_data(file):
@@ -53,9 +54,9 @@ def create_aggrid(df, editable=True):
 
 def main():
     # 固定变量
-    host = "https://uat.agentspro.cn"
-    openai.api_key = "fe5f6afae5bfffb5c4fa148b061977a1.9Ep40DMGOnBb3FTo"
-    openai.base_url = "https://open.bigmodel.cn/api/paas/v4/"
+    host = AUTOAGENTS_HOST_NAME
+    openai.api_key = OPEN_AI_API_KEY
+    openai.base_url = OPEN_AI_BASE_URL
 
     # 网页设置
     st.set_page_config(page_title="AgentAcc Batch Test", layout="wide", page_icon="🎯")
@@ -80,6 +81,12 @@ def main():
 
     # 侧边栏
     with st.sidebar:
+        with st.expander("💡 问答对生成器（选用）"):
+            topic = st.text_input("**问答对主题***", value=topic, placeholder="请描述一下你想要生成的问答对以及多少组", key="topic").strip()
+            with st.spinner('正在进行生成...'):
+                qa_csv = qa_pair_generator(topic, ZHIPU_AI_API_KEY)
+            st.download_button('下载生成的问答对.csv', qa_csv, file_name='生成的问答对.csv')
+
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             default_df = get_default_data()
