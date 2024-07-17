@@ -1,6 +1,7 @@
 import pandas as pd
 from zhipuai import ZhipuAI
 import json
+from config import ZHIPU_AI_API_KEY
 
 def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group=5, context=""):
     system_prompt = """
@@ -43,6 +44,10 @@ def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group=5, context="
     return df
 
 if __name__ == '__main__':
-    topic = "帮我生成一组问答对，问题是客户的电话投诉，回答是标准而礼貌的客服回复"
-    df=qa_pair_generator(topic)
+    num_group = 5
+    context = "这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业"
+    question = "客户的电话投诉"
+    answer = "标准而礼貌的客服回复"
+
+    df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group=5, context="")
     print(df)

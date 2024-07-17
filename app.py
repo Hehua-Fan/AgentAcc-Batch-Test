@@ -78,7 +78,7 @@ def main():
         # 问答对生成器
         with st.expander("💡 问答对生成器（选用工具）"):
             num_group = st.text_input("**问答对组数（选填）***",value="5", placeholder="默认：5组").strip()
-            context = st.text_input("**应用背景（选填）***",value="", placeholder="默认：无").strip()
+            context = st.text_input("**应用背景（选填）***",value="", placeholder="默认：无，例如：这个电话客服是基于线下实体店的，是线下类似于剧本杀，棋牌游戏的服务行业").strip()
             question = st.text_input("**期望问题（必填）***",placeholder="例如：客户的电话投诉").strip()
             answer = st.text_input("**期望回答（必填）***",placeholder="例如：标准而礼貌的客服回复").strip()
             start_qa_generator = st.button('🚀 开始生成问答对！', disabled=not all([question, answer]))
@@ -87,7 +87,7 @@ def main():
                     qa_pair_df = qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group, context)
                     qa_pair_df.to_excel('生成的问答对.xlsx',index=False)
                 with open('生成的问答对.xlsx', 'rb') as f_qa:
-                    st.download_button('下载生成的问答对', f_qa, file_name='生成的问答对.xlsx')
+                    st.download_button('下载生成的问答对.xlsx', f_qa, file_name='生成的问答对.xlsx')
             else:
                 st.warning('请描述想要生成的问答对')
             
@@ -96,7 +96,7 @@ def main():
             default_df = get_default_data()
             default_df.to_excel('测试模板.xlsx',index=False)
             with open('测试模板.xlsx', 'rb') as f_template:
-                st.download_button('下载测试结果文件', f_template, file_name='测试模板.xlsx')
+                st.download_button('下载测试结果文件.xlsx', f_template, file_name='测试模板.xlsx')
 
         with st.expander("🤖 Agent信息填写"):
             st.write("**Agent信息查询：**")
@@ -157,7 +157,7 @@ def main():
         # 下载测试结果文件
         df.to_excel('测试结果.xlsx',index=False)
         with open('测试结果.xlsx', 'rb') as f_res:
-                st.download_button('下载测试结果文件', f_res, file_name='测试结果.xlsx')
+                st.download_button('下载测试结果文件.xlsx', f_res, file_name='测试结果.xlsx')
 
 
 if __name__ == '__main__':

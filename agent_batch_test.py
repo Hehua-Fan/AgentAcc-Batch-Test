@@ -11,15 +11,15 @@ def qa_pair_generator(ZHIPU_AI_API_KEY, question, answer, num_group=5, context="
     system_prompt = """
     # Role：请根据我的主题和问题，帮我生成我想要的问答对
     # Format
-    请以json格式输出，以Question, Answer作为Key，直接书写问题和回答，不需要冒号，例如：
+    请以json格式输出，以Question, Answer作为Key，以下是示例，只是在向你展示格式：
     {
         "Question": [
-            "问题1",
-            "问题2"
+            "为什么我的服务这么慢？",
+            "我什么时候能收到我订购的商品？"
         ],
         "Answer": [
-            "回答1",
-            "回答2"
+            "很抱歉给您带来了不便，我们会立即为您查看原因并尽快解决，请您提供一下相关信息以便我们更好地帮助您。",
+            "感谢您的耐心等待，根据我们的系统显示，您的商品将在接下来的3-5天内送达。如果有任何问题，我们会及时与您联系。"
         ]
     }   
     """
