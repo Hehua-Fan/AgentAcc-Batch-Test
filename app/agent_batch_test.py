@@ -151,15 +151,16 @@ def evaluate_prompt(df, host, uuid, authkey, authsecret):
             num_correct += 1
 
         # Update DataFrame with current results
-        df.at[i, 'Agent回答'] = response
-        df.at[i, '是否正确'] = tf
+        st.session_state.df.at[i, 'Agent回答'] = response
+        st.session_state.df.at[i, '是否正确'] = tf
 
-        # Show updated results in Streamlit
-        st.write(df)
+        # Rerender the AgGrid component
+        with st.empty():
+            create_aggrid(st.session_state.df, editable=False)
 
     accuracy = num_correct / num_total
 
-    return df, accuracy
+    return st.session_state.df, accuracy
 
 
 
