@@ -1,5 +1,5 @@
 # AgentAcc-Batch-Test
-![alt text](src/img.png)
+![alt text](public/img.png)
 
 ## Quick Start
 There is a website can be used directly to demo.
