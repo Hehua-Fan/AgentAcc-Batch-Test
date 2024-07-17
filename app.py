@@ -81,8 +81,8 @@ def main():
 
     # 侧边栏
     with st.sidebar:
-        with st.expander("💡 问答对生成器（选用）"):
-            topic = st.text_input("**问答对主题***", placeholder="请描述一下你想要生成的问答对以及多少组").strip()
+        with st.expander("💡 问答对生成器（选用工具）"):
+            topic = st.text_area("**问答对主题***", placeholder="帮我生成一组问答对，问题是客户的电话投诉，回答是标准而礼貌的客服回复").strip()
             with st.spinner('正在进行生成...'):
                 qa_pair_df = qa_pair_generator(topic, ZHIPU_AI_API_KEY)
                 qa_pair_csv = qa_pair_df.to_csv(index=False)
