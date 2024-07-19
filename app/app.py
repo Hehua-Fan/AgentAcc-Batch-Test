@@ -82,7 +82,6 @@ def main():
         if IsEvaluate:
             st.metric("Agent回答准确率：", f"{acc:.2%}")
 
-
         # 下载测试结果文件
         download_file(label='下载测试结果.xlsx', file_name='测试结果.xlsx', df=agent_df)
 
