@@ -25,7 +25,7 @@ def main():
         )
         if IsEvaluate == options[1]:
             IsEvaluate = True
-        else: False
+        else: IsEvaluate = False
             
         # 板块 1: 问答对生成器（选用工具）
         qa_pair_generator()
