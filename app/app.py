@@ -60,7 +60,7 @@ def main():
                 df['是否正确'] = ''
 
     # Dashboard
-    st.subheader("📊 测试数据（测试过程中不要点击任何地方！！！）")
+    st.subheader("📊 测试数据")
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
     grid_response = create_aggrid(df, editable=not start_test)
