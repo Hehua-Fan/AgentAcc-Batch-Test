@@ -17,7 +17,6 @@ def download_file(label, file_name, df):
     with open(file_name, 'rb') as f:
         st.download_button(label=label, data=f, file_name=file_name)
 
-
 def parse_info(info_str):
     info_dict = {}
     # 以空格分割
@@ -42,7 +41,7 @@ def get_default_data_without_expectation():
 
 # 创建AgGrid表格函数
 def create_aggrid(df, editable=True):
-    edited_df = st.data_editor(df, num_rows="dynamic")
+    edited_df = st.data_editor(df, num_rows="dynamic", disabled=not editable)
     return edited_df
 
 def extract_json(text):

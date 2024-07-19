@@ -69,11 +69,11 @@ def agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder):
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
-        question = df.iloc[i, 0]
-        response = agent_api(question, uuid, authkey, authsecret)
+        prompt = df.iloc[i, 0]
+        response = agent_api(prompt, uuid, authkey, authsecret)
         actual_output.append(response)
         if IsEvaluate:
-            tf = eval_model(question, response, df.iloc[i, 1])
+            tf = eval_model(prompt, response, df.iloc[i, 1])
             judgement.append(tf)
             if tf == "True":
                 num_correct += 1

@@ -35,7 +35,7 @@ def main():
         with st.expander("📥 下载测试模板"):
             st.write("可在本地编辑测试模版")
             template_df = get_default_data()
-            download_file(label='下载测试结果文件.xlsx',file_name='测试模板.xlsx', df=template_df)
+            download_file(label='下载测试结果文件.xlsx', file_name='测试模板.xlsx', df=template_df)
 
         # 板块 3: Agent信息填写
         uuid, authkey, authsecret = agent_info()
@@ -60,11 +60,11 @@ def main():
                 df['是否正确'] = ''
 
     # Dashboard
-    st.subheader("📊 测试数据（测试过程中不要点击任何按钮！）")
+    st.subheader("📊 测试数据（测试过程中不要点击任何地方！！！）")
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
-    grid_response = create_aggrid(df, editable=False if start_test else True)
-    result_df = grid_response
+    grid_response = create_aggrid(df, editable=not start_test)
+    result_df = grid_response  # 使用直接返回的数据框架
 
     # 填入信息解锁测试按钮
     if not all([uuid, authkey, authsecret]):
@@ -72,7 +72,7 @@ def main():
     elif start_test:
         with st.spinner('正在进行测试...'):
             placeholder = st.empty()
-            agent_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder)
+            agent_df, acc = agent_eval(result_df, uuid, authkey, authsecret, IsEvaluate, placeholder)
         
         # 更新原有表格的数据
         update_file(result_df, agent_df, IsEvaluate)
@@ -82,11 +82,10 @@ def main():
         if IsEvaluate:
             st.metric("Agent回答准确率：", f"{acc:.2%}")
 
-        create_aggrid(result_df, editable=False)
+        create_aggrid(agent_df, editable=False)
 
         # 下载测试结果文件
-        download_file(label='下载测试结果.xlsx',file_name='测试结果.xlsx', df=df)
-
+        download_file(label='下载测试结果.xlsx', file_name='测试结果.xlsx', df=agent_df)
 
 if __name__ == '__main__':
     main()
