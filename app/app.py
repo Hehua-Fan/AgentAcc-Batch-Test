@@ -1,9 +1,5 @@
 import streamlit as st
-import pandas as pd
-import openai
 from agent_eval import agent_eval
-import plotly.graph_objects as go
-from configs import ZHIPU_AI_API_KEY, OPEN_AI_API_KEY, OPEN_AI_BASE_URL, AUTOAGENTS_HOST_NAME
 from qa_pair_generator import qa_pair_generator
 from page_config import page_config
 from agent_info import agent_info
