@@ -16,7 +16,7 @@ def main():
     # Sidebar
     with st.sidebar:
         # 选择模式
-        options = ["回答", "回答 + Agent准确率"]
+        options = ["回答", "回答 + 准确率"]
         IsEvaluate = st.radio(
             "选择模式",
             options,
