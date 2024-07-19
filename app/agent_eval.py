@@ -6,7 +6,6 @@ from stqdm import stqdm
 from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME, ZHIPU_AI_API_KEY, MODEL_BASE_URL
 from utils import extract_json
 
-
 def eval_model(prompt, actual_output, expected_output):
     system_prompt = SYSTEM_PROMPT_EVAL
 
@@ -16,18 +15,18 @@ def eval_model(prompt, actual_output, expected_output):
     <文本2>{expected_output}</文本2>
     """
     response = openai.chat.completions.create(
-        model = "glm-4",
+        model="glm-4",
         messages=[
-            {"role":"system", "content":system_prompt},
-            {"role":"user", "content":user_prompt}
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
         ],
         top_p=0.7,
         temperature=0.9,
-        response_format= { "type": "json_object" }
+        response_format={"type": "json_object"}
     )
-    meassage = response.choices[0].message.content
+    message = response.choices[0].message.content
 
-    json_str = extract_json(meassage)
+    json_str = extract_json(message)
     try:
         boolean = json.loads(json_str)['result']
     except Exception as e:
@@ -56,38 +55,49 @@ def agent_api(prompt, uuid, authKey, authSecret):
     # 检查响应状态码
     if response.status_code == 200:
         try:
-            # Try to parse the response as JSON
+            # 尝试将响应解析为JSON
             json_response = response.json()
             return json_response["choices"][0]["content"]
         except ValueError:
-            # If the response is not JSON, print the raw text
+            # 如果响应不是JSON格式，打印原始文本
             print("Response content is not in JSON format:", response.text)
     else:
         print(f"Request failed with status code {response.status_code}")
 
-def agent_eval(df, uuid, authkey, authsecret, IsEvaluate):
+def agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder):
     num_correct, num_total = 0, df.shape[0]
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
-        prompt = df.iloc[i,0]
-        response = agent_api(prompt, uuid, authkey, authsecret)
+        question = df.iloc[i, 0]
+        response = agent_api(question, uuid, authkey, authsecret)
         actual_output.append(response)
         if IsEvaluate:
-            tf = eval_model(prompt, response, df.iloc[i,1])
+            tf = eval_model(question, response, df.iloc[i, 1])
             judgement.append(tf)
             if tf == "True":
                 num_correct += 1
 
+        # 实时更新DataFrame
+        if IsEvaluate:
+            temp_df = pd.DataFrame(data={'问题': df.iloc[:i+1, 0],
+                                         '期望输出': df.iloc[:i+1, 1],
+                                         'Agent回答': actual_output,
+                                         '是否正确': judgement})
+        else:
+            temp_df = pd.DataFrame(data={'问题': df.iloc[:i+1, 0],
+                                         'Agent回答': actual_output})
+        placeholder.write(temp_df)
+
     if IsEvaluate:
-        df = pd.DataFrame(data={'问题': df.iloc[:,0],
-                           '期望输出': df.iloc[:,1],
-                           'Agent回答': actual_output,
-                           '是否正确': judgement})
+        df = pd.DataFrame(data={'问题': df.iloc[:, 0],
+                                '期望输出': df.iloc[:, 1],
+                                'Agent回答': actual_output,
+                                '是否正确': judgement})
         accuracy = num_correct / num_total
     else:
-        df = pd.DataFrame(data={'问题': df.iloc[:,0],
-                           'Agent回答': actual_output})
+        df = pd.DataFrame(data={'问题': df.iloc[:, 0],
+                                'Agent回答': actual_output})
         accuracy = "Not Important"
 
     return df, accuracy

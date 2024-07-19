@@ -5,7 +5,6 @@ from page_config import page_config
 from agent_info import agent_info
 from utils import load_data, get_default_data, download_file, create_aggrid, get_default_data_without_expectation, update_file
 
-
 def main():
     # 网页设置
     page_config()
@@ -26,7 +25,8 @@ def main():
         )
         if IsEvaluate == options[1]:
             IsEvaluate = True
-        else: IsEvaluate = False
+        else:
+            IsEvaluate = False
             
         # 板块 1: 问答对生成器（选用工具）
         qa_pair_generator()
@@ -41,7 +41,6 @@ def main():
         uuid, authkey, authsecret = agent_info()
             
         file_uploaded = st.file_uploader("**上传你的测试模版(.csv或.xlsx)**")
-
 
     # 数据加载和显示
     if not IsEvaluate:
@@ -64,7 +63,7 @@ def main():
     st.subheader("📊 测试数据（测试过程中不要点击任何按钮！）")
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
-    grid_response = create_aggrid(df)
+    grid_response = create_aggrid(df, editable=False if start_test else True)
     result_df = grid_response
 
     # 填入信息解锁测试按钮
@@ -72,7 +71,8 @@ def main():
         st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
     elif start_test:
         with st.spinner('正在进行测试...'):
-            agent_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate)
+            placeholder = st.empty()
+            agent_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder)
         
         # 更新原有表格的数据
         update_file(result_df, agent_df, IsEvaluate)
