@@ -26,12 +26,12 @@ pip install -r requirements.txt
 
 3. **Enter commands in terminal**
 ```shell
-streamlit run app.py
+streamlit run app/app.py
 ```
 
 ## Possible Improvements
-* 输入个人的API_KEY
-* 限制问答对生成组数，限制批量测试数量
-* 点击其他按钮或空白处会重新刷新页面，导致数据丢失
-* 流式输出测试结果
 * support multi-round dialogue
+* ~~limit the quantity of the q-a pair generation~~
+* ~~Clicking another button or blank space will refresh the page, resulting in data loss~~
+* ~~show real-time output for the better experience while waiting for the output~~
+
