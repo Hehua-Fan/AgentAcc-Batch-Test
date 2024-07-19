@@ -11,11 +11,6 @@ from utils import load_data, get_default_data, download_file, create_aggrid, get
 
 
 def main():
-    # 环境变量
-    host = AUTOAGENTS_HOST_NAME
-    openai.api_key = OPEN_AI_API_KEY
-    openai.base_url = OPEN_AI_BASE_URL
-
     # 网页设置
     page_config()
 
@@ -24,6 +19,18 @@ def main():
 
     # Sidebar
     with st.sidebar:
+        # 选择模式
+        options = ["回答", "回答 + Agent准确率"]
+        IsEvaluate = st.radio(
+            "选择模式",
+            options,
+            index=1,
+            horizontal=True
+        )
+        if IsEvaluate == options[1]:
+            IsEvaluate = True
+        else: False
+            
         # 板块 1: 问答对生成器（选用工具）
         qa_pair_generator()
         
@@ -38,7 +45,6 @@ def main():
             
         file_uploaded = st.file_uploader("**上传你的测试模版(.csv或.xlsx)**")
 
-        IsEvaluate = st.checkbox("开启Agent准确率计算", value=True)
 
     # 数据加载和显示
     if not IsEvaluate:
@@ -68,7 +74,7 @@ def main():
         st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
     elif start_test:
         with st.spinner('正在进行测试...'):
-            result_df, acc = agent_eval(df, host, uuid, authkey, authsecret, IsEvaluate)
+            result_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate)
         
         # 更新原有表格的数据
         df['Agent回答'] = result_df['Agent实际输出']

@@ -3,7 +3,7 @@ import json
 import requests
 import pandas as pd
 from stqdm import stqdm
-from configs import SYSTEM_PROMPT_EVAL
+from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME, ZHIPU_AI_API_KEY, MODEL_BASE_URL
 from utils import extract_json
 
 
@@ -35,7 +35,11 @@ def eval_model(prompt, actual_output, expected_output):
         return False
     return boolean
 
-def agent_api(prompt, host, uuid, authKey, authSecret):
+def agent_api(prompt, uuid, authKey, authSecret):
+    # 环境变量
+    host = AUTOAGENTS_HOST_NAME
+    openai.api_key = ZHIPU_AI_API_KEY
+    openai.base_url = MODEL_BASE_URL
     url = host + "/openapi/agent/chat/completions/v1"
     headers = {
         "Authorization": f"Bearer {authKey}.{authSecret}"
@@ -61,13 +65,13 @@ def agent_api(prompt, host, uuid, authKey, authSecret):
     else:
         print(f"Request failed with status code {response.status_code}")
 
-def agent_eval(df, host, uuid, authkey, authsecret, IsEvaluate):
+def agent_eval(df, uuid, authkey, authsecret, IsEvaluate):
     num_correct, num_total = 0, df.shape[0]
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
         prompt = df.iloc[i,0]
-        response = agent_api(prompt, host, uuid, authkey, authsecret)
+        response = agent_api(prompt, uuid, authkey, authsecret)
         actual_output.append(response)
         if IsEvaluate:
             tf = eval_model(prompt, response, df.iloc[i,1])
@@ -76,14 +80,14 @@ def agent_eval(df, host, uuid, authkey, authsecret, IsEvaluate):
                 num_correct += 1
 
     if IsEvaluate:
-        df = pd.DataFrame(data={'提示词': df.iloc[:,0],
+        df = pd.DataFrame(data={'问题': df.iloc[:,0],
                            '期望输出': df.iloc[:,1],
-                           'Agent实际输出': actual_output,
-                           '是否准确': judgement})
+                           'Agent回答': actual_output,
+                           '是否正确': judgement})
         accuracy = num_correct / num_total
     else:
-        df = pd.DataFrame(data={'提示词': df.iloc[:,0],
-                           'Agent实际输出': actual_output})
+        df = pd.DataFrame(data={'问题': df.iloc[:,0],
+                           'Agent回答': actual_output})
         accuracy = "Not Important"
 
     return df, accuracy
