@@ -60,12 +60,13 @@ def main():
                 df['是否正确'] = ''
 
     # Dashboard
-    st.subheader("📊 测试数据")
+    st.subheader("📊 测试数据（测试过程中不要点击任何按钮！）")
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
     grid_response = create_aggrid(df)
     result_df = grid_response
 
+    # 填入信息解锁测试按钮
     if not all([uuid, authkey, authsecret]):
         st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
     elif start_test:
