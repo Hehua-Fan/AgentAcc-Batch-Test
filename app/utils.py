@@ -31,13 +31,13 @@ def parse_info(info_str):
 # 获取默认数据函数
 def get_default_data():
     return pd.DataFrame({
-        '提示词': ["（示例）中国的首都在哪里？"],
+        '问题': ["（示例）中国的首都在哪里？"],
         '期望输出': ["北京"]
     })
 
 def get_default_data_without_expectation():
     return pd.DataFrame({
-        '提示词': ["（示例）中国的首都在哪里？"],
+        '问题': ["（示例）中国的首都在哪里？"],
     })
 
 # 创建AgGrid表格函数
