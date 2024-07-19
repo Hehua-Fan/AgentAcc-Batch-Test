@@ -3,7 +3,7 @@ from agent_eval import agent_eval
 from qa_pair_generator import qa_pair_generator
 from page_config import page_config
 from agent_info import agent_info
-from utils import load_data, get_default_data, download_file, create_aggrid, get_default_data_without_expectation
+from utils import load_data, get_default_data, download_file, create_aggrid, get_default_data_without_expectation, update_file
 
 
 def main():
@@ -64,24 +64,23 @@ def main():
     start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
     grid_response = create_aggrid(df)
-    df = grid_response
+    result_df = grid_response
 
     if not all([uuid, authkey, authsecret]):
         st.warning('⚠️ 请在侧边栏填写🤖Agent信息')
     elif start_test:
         with st.spinner('正在进行测试...'):
-            result_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate)
+            agent_df, acc = agent_eval(df, uuid, authkey, authsecret, IsEvaluate)
         
         # 更新原有表格的数据
-        df['Agent回答'] = result_df['Agent实际输出']
-        if IsEvaluate:
-            df['是否正确'] = result_df['是否准确']
+        update_file(result_df, agent_df, IsEvaluate)
 
         st.write("") 
         st.subheader("🔍 测试结果")
         if IsEvaluate:
             st.metric("Agent回答准确率：", f"{acc:.2%}")
-        create_aggrid(df, editable=False)
+
+        create_aggrid(result_df, editable=False)
 
         # 下载测试结果文件
         download_file(label='下载测试结果.xlsx',file_name='测试结果.xlsx', df=df)

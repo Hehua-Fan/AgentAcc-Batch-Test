@@ -55,3 +55,8 @@ def extract_json(text):
             return text  # 如果没有找到匹配的模式，则返回None
     else:
         return text
+    
+def update_file(result_df, agent_df, IsEvaluate):
+    result_df['Agent回答'] = agent_df['Agent回答']
+    if IsEvaluate:
+        result_df['是否正确'] = agent_df['是否正确']
