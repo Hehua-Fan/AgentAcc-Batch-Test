@@ -21,6 +21,7 @@ def main():
             "选择模式",
             options,
             index=1,
+            help="回答模式：建议只使用一列问题，不会计算准确率，运行速度会更快",
             horizontal=True
         )
         if IsEvaluate == options[1]:
