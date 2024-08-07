@@ -1,6 +1,8 @@
 ZHIPU_AI_API_KEY = "df151b79b987186cc7efd55a09108c52.ih4IU7cinc7FXZ7A"
 MODEL_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/"
-AUTOAGENTS_HOST_NAME = "https://uat.agentspro.cn"
+AUTOAGENTS_HOST_NAME_UAT = "https://uat.agentspro.cn"
+AUTOAGENTS_HOST_NAME_TEST = "https://test.agentspro.cn"
+AUTOAGENTS_HOST_NAME_LINGDA = "https://lingda.agentspro.cn"
 
 SYSTEM_PROMPT_EVAL = """
     # Role：文本内容一致性分析师

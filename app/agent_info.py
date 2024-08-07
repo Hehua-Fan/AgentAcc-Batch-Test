@@ -6,6 +6,14 @@ def agent_info():
         st.write("**Agent信息查询：**")
         st.write("**我的Agent - 发布 - API服务**")
 
+        options = ["uat", "test", "lingda"]
+        platform = st.radio(
+            "选择环境",
+            options,
+            index=0,
+            horizontal=True
+        )
+
         allinfo = st.text_input("**快速输入**", placeholder="点击API服务的复制按钮", key="allinfo").strip()
 
         # 初始值
@@ -24,4 +32,4 @@ def agent_info():
         authkey = st.text_input("**AuthKey***", value=authkey, placeholder="请输入AuthKey", key="authkey").strip()
         authsecret = st.text_input("**AuthSecret***", value=authsecret, placeholder="请输入AuthSecret", key="authsecret").strip()
 
-        return uuid, authkey, authsecret
+        return uuid, authkey, authsecret, platform

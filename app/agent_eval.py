@@ -3,7 +3,7 @@ import json
 import requests
 import pandas as pd
 from stqdm import stqdm
-from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME, ZHIPU_AI_API_KEY, MODEL_BASE_URL
+from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME_UAT, AUTOAGENTS_HOST_NAME_TEST, AUTOAGENTS_HOST_NAME_LINGDA, ZHIPU_AI_API_KEY, MODEL_BASE_URL
 from utils import extract_json
 
 def eval_model(prompt, actual_output, expected_output):
@@ -34,9 +34,14 @@ def eval_model(prompt, actual_output, expected_output):
         return False
     return boolean
 
-def agent_api(prompt, uuid, authKey, authSecret):
+def agent_api(prompt, uuid, authKey, authSecret, platform):
     # 环境变量
-    host = AUTOAGENTS_HOST_NAME
+    if platform == 'uat':
+        host = AUTOAGENTS_HOST_NAME_UAT
+    elif platform == 'test':
+        host = AUTOAGENTS_HOST_NAME_TEST
+    else:
+        host = AUTOAGENTS_HOST_NAME_LINGDA
     openai.api_key = ZHIPU_AI_API_KEY
     openai.base_url = MODEL_BASE_URL
     url = host + "/openapi/agent/chat/completions/v1"
@@ -57,6 +62,7 @@ def agent_api(prompt, uuid, authKey, authSecret):
         try:
             # 尝试将响应解析为JSON
             json_response = response.json()
+            print(json_response)
             return json_response["choices"][0]["content"]
         except ValueError:
             # 如果响应不是JSON格式，打印原始文本
@@ -64,13 +70,13 @@ def agent_api(prompt, uuid, authKey, authSecret):
     else:
         print(f"Request failed with status code {response.status_code}")
 
-def agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder):
+def agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder, platform):
     num_correct, num_total = 0, df.shape[0]
     actual_output, judgement = [], []
 
     for i in stqdm(range(df.shape[0]), desc="当前测试进度"):
         prompt = df.iloc[i, 0]
-        response = agent_api(prompt, uuid, authkey, authsecret)
+        response = agent_api(prompt, uuid, authkey, authsecret, platform)
         actual_output.append(response)
         if IsEvaluate:
             tf = eval_model(prompt, response, df.iloc[i, 1])

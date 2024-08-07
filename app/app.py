@@ -38,7 +38,7 @@ def main():
             download_file(label='下载测试结果文件.xlsx', file_name='测试模板.xlsx', df=template_df)
 
         # 板块 3: Agent信息填写
-        uuid, authkey, authsecret = agent_info()
+        uuid, authkey, authsecret, platform = agent_info()
             
         file_uploaded = st.file_uploader("**上传你的测试模版(.csv或.xlsx)**")
 
@@ -72,7 +72,7 @@ def main():
     elif start_test:
         with st.spinner('正在进行测试...'):
             placeholder = st.empty()
-            agent_df, acc = agent_eval(result_df, uuid, authkey, authsecret, IsEvaluate, placeholder)
+            agent_df, acc = agent_eval(result_df, uuid, authkey, authsecret, IsEvaluate, placeholder, platform)
         
         # 更新原有表格的数据
         update_file(result_df, agent_df, IsEvaluate)
