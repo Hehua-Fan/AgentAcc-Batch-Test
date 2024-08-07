@@ -3,12 +3,11 @@ from utils import parse_info
 
 def agent_info():
     with st.expander("🤖 Agent信息填写"):
-        st.write("**Agent信息查询：**")
-        st.write("**我的Agent - 发布 - API服务**")
+        st.write("**Agent信息查询（我的Agent - 发布 - API服务）**")
 
         options = ["uat", "test", "lingda"]
         platform = st.radio(
-            "选择环境",
+            "**选择环境**",
             options,
             index=0,
             horizontal=True
@@ -28,8 +27,8 @@ def agent_info():
             authsecret = parsed_info.get("AuthSecret", "")
 
         # 这里使用解析后的值填充输入框，并给每个输入框设置唯一的 key
-        uuid = st.text_input("**Uuid***", value=uuid, placeholder="请输入uuid", key="uuid").strip()
-        authkey = st.text_input("**AuthKey***", value=authkey, placeholder="请输入AuthKey", key="authkey").strip()
-        authsecret = st.text_input("**AuthSecret***", value=authsecret, placeholder="请输入AuthSecret", key="authsecret").strip()
+        uuid = st.text_input("**Uuid**:red[*]", value=uuid, placeholder="请输入uuid", key="uuid").strip()
+        authkey = st.text_input("**AuthKey**:red[*]", value=authkey, placeholder="请输入AuthKey", key="authkey").strip()
+        authsecret = st.text_input("**AuthSecret**:red[*]", value=authsecret, placeholder="请输入AuthSecret", key="authsecret").strip()
 
         return uuid, authkey, authsecret, platform

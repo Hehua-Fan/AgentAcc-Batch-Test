@@ -6,8 +6,8 @@ def page_config():
     css = """
        <style>
        [data-testid="stSidebar"][aria-expanded="true"]{
-           min-width: 350px;
-           max-width: 350px;
+           min-width: 400px;
+           max-width: 400px;
        }
        """
     st.markdown(css, unsafe_allow_html=True)
