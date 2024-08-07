@@ -1,8 +1,7 @@
-pandas
-streamlit
-openai
-stqdm
-openpyxl
-streamlit-aggrid
-plotly
-zhipuai
+pandas==2.2.2
+streamlit==1.36.0
+openai==1.14.2
+stqdm==0.0.5
+openpyxl==3.15
+plotly==5.9.0
+zhipuai==2.1.3
