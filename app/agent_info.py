@@ -4,7 +4,7 @@ from utils import parse_info
 def agent_info():
     with st.expander("🤖 Agent信息填写"):
         st.write("**Agent信息查询**")
-        st.write("(我的Agent - 发布 - API服务)")
+        st.write("**我的Agent - 发布 - API服务**")
 
         options = ["uat", "test", "lingda"]
         platform = st.radio(
