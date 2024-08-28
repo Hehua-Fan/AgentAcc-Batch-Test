@@ -1,4 +1,4 @@
-ZHIPU_AI_API_KEY = "df151b79b987186cc7efd55a09108c52.ih4IU7cinc7FXZ7A"
+ZHIPU_AI_API_KEY = "7bb857ce4402c0e64dba6b34d5e3670d.0s4bJlxUE7m0KQ1F"
 MODEL_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/"
 AUTOAGENTS_HOST_NAME_UAT = "https://uat.agentspro.cn"
 AUTOAGENTS_HOST_NAME_TEST = "https://test.agentspro.cn"
