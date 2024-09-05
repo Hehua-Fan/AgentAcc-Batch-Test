@@ -39,7 +39,7 @@ def eval_model(prompt, actual_output, expected_output):
 <文本2>{expected_output}</文本2>
 
 以json格式输出最终结果。
-正确输出示例：{{ "result": True }} 或 {{ "result": False }}
+正确输出示例：{{ "result": true }} 或 {{ "result": false }}
 """
     
     response = openai.chat.completions.create(
