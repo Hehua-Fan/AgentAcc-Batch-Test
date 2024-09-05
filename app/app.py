@@ -61,8 +61,13 @@ def main():
 
     # Dashboard
     st.subheader("📊 测试数据")
-    start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
 
+    col1, col2, col3 = st.columns([1, 3, 6])
+    with col1:
+        num_threads = st.number_input('选择线程数量', min_value=1, max_value=10, value=1, step=1, key='num_threads_input', disabled=not all([uuid, authkey, authsecret]))
+
+    start_test = st.button('🚀 开始批量测试！', key='start_test_button', disabled=not all([uuid, authkey, authsecret]))
+    
     grid_response = create_aggrid(df, editable=not start_test)
     result_df = grid_response  # 使用直接返回的数据框架
 
@@ -72,7 +77,7 @@ def main():
     elif start_test:
         with st.spinner('正在进行测试...'):
             placeholder = st.empty()
-            agent_df, acc = agent_eval(result_df, uuid, authkey, authsecret, IsEvaluate, placeholder, platform)
+            agent_df, acc = agent_eval(result_df, uuid, authkey, authsecret, IsEvaluate, placeholder, platform,num_threads)
         
         # 更新原有表格的数据
         update_file(result_df, agent_df, IsEvaluate)
