@@ -79,7 +79,7 @@ def agent_api(prompt, uuid, authKey, authSecret, platform):
     body = {
         "agentId": f"{uuid}",
         "chatId": None,
-        "userChatInput": f"{prompt}",
+        "userChatInput": f"{prompt}"
     }
 
     # 发送POST请求
@@ -90,13 +90,21 @@ def agent_api(prompt, uuid, authKey, authSecret, platform):
         try:
             # 尝试将响应解析为JSON
             json_response = response.json()
-            #print(json_response)
-            return json_response["choices"][0]["content"]
+            # 检查 "choices" 列表是否存在且不为空
+            if "choices" in json_response and len(json_response["choices"]) > 0:
+                conten = json_response["choices"][0]["content"]
+                #print(conten)
+                return conten
+            else:
+                print("The 'choices' list is empty or not present in the response.",json_response)
+                return ""
         except ValueError:
             # 如果响应不是JSON格式，打印原始文本
             print("Response content is not in JSON format:", response.text)
+            return ""
     else:
         print(f"Request failed with status code {response.status_code}")
+        return ""
 
 def agent_eval(df, uuid, authkey, authsecret, IsEvaluate, placeholder, platform, num_threads):
     num_correct, num_total = 0, df.shape[0]
