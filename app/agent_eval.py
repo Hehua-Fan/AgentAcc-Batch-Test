@@ -4,7 +4,7 @@ import requests
 import pandas as pd
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
-from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME_UAT, AUTOAGENTS_HOST_NAME_TEST, AUTOAGENTS_HOST_NAME_LINGDA, ZHIPU_AI_API_KEY, MODEL_BASE_URL
+from configs import SYSTEM_PROMPT_EVAL, AUTOAGENTS_HOST_NAME_UAT, AUTOAGENTS_HOST_NAME_TEST, AUTOAGENTS_HOST_NAME_LINGDA, ZHIPU_AI_API_KEY, MODEL_BASE_URL, AUTOAGENTS_HOST_NAME_HUICHEN
 from utils import extract_json
 import streamlit as st
 from stqdm import stqdm
@@ -68,6 +68,8 @@ def agent_api(prompt, uuid, authKey, authSecret, platform):
         host = AUTOAGENTS_HOST_NAME_UAT
     elif platform == 'test':
         host = AUTOAGENTS_HOST_NAME_TEST
+    elif platform == 'huichen':
+        host = AUTOAGENTS_HOST_NAME_HUICHEN
     else:
         host = AUTOAGENTS_HOST_NAME_LINGDA
     openai.api_key = ZHIPU_AI_API_KEY

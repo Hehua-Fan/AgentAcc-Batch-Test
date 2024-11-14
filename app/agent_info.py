@@ -6,7 +6,7 @@ def agent_info():
         st.write("**Agent信息查询**")
         st.write("**我的Agent - 发布 - API服务**")
 
-        options = ["uat", "test", "lingda"]
+        options = ["uat", "test", "lingda","huichen"]
         platform = st.radio(
             "**选择环境**",
             options,
