@@ -3,7 +3,7 @@ MODEL_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/"
 AUTOAGENTS_HOST_NAME_UAT = "https://uat.agentspro.cn"
 AUTOAGENTS_HOST_NAME_TEST = "https://test.agentspro.cn"
 AUTOAGENTS_HOST_NAME_LINGDA = "https://lingda.agentspro.cn"
-AUTOAGENTS_HOST_NAME_HUICHEN = "http://36.134.141.180:81"
+AUTOAGENTS_HOST_NAME_HUICHEN = "http://36.134.141.180:8000"
 
 SYSTEM_PROMPT_EVAL = """
     # Role：文本内容一致性分析师
